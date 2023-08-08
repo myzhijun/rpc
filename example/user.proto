@@ -1,0 +1,55 @@
+// 用于为 caller 和 callee 提供 【远程方法名 + 方法参数 + 方法返回值】 的序列化和反序列化
+
+syntax = "proto3";
+
+package fixbug;
+
+option cc_generic_services = true;
+
+message ResultCode
+{
+    int32 errcode = 1; 
+    bytes errmsg = 2;
+}
+
+message LoginRequest
+{
+    bytes name = 1;
+    bytes pwd = 2;
+}
+
+message LoginResponse
+{
+    ResultCode result = 1;
+    bool sucess = 2;
+}
+
+
+message RegisterRequest
+{
+    uint32 id = 1;
+    bytes name = 2;
+    bytes pwd = 3;
+}
+
+message RegisterResponse
+{
+    ResultCode result = 1;
+    bool sucess = 2;
+}
+
+
+
+
+/*
+对应生成：
+    class UserServiceRpc 用在 Callee（ServiceProvider，rpc 服务提供者）端
+    class UserServiceRpc_Stub 用在 Caller（ServiceConsumer，rpc 服务消费者）端 
+*/
+service UserServiceRpc
+{
+    // 该 Login 方法名与 UserService::Login 方法名可相同，也可不相同。但最好让二者相同。
+    rpc Login(LoginRequest) returns(LoginResponse);
+    
+    rpc Register(RegisterRequest) returns(RegisterResponse);
+}

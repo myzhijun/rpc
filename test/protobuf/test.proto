@@ -1,0 +1,92 @@
+// xxx.prpto    protobuf 的配置文件，搭配 vscode-proto3 插件以便 VScode 能够识别 .proto 文件
+
+// 声明 protobuf 的版本。默认使用 proto2
+syntax = "proto3";
+
+
+/*
+声明代码所在的包（对 C++ 而言是 namespace）
+
+xxx.proto 文件之后会通过 protoc 被编译成源文件 xxx.pb.cc 和 xxx.pub.h。
+欲使用该源文件中的 message，需先声明 using namespace 包名; 。
+*/
+package fixbug;  
+
+
+
+// 该选项表示生成 service服务类 和 rpc方法（默认不生成）。
+option cc_generic_services = true;
+
+
+// ----------------------------------
+
+// 定义登录请求消息
+message LoginRequest
+{
+    // 1，2 表示 消息 LoginRequest 中的第 1，2 个字段，而非 C++ 中的初始化
+    bytes name = 1;    // 若使用 string，则涉及 字符 <=> 字节 的转换。虽然可行，但效率低点。
+                        // 存储字符串时，最好以 bytes 代替 string。二者此时的使用方式相同。
+    bytes pwd = 2;
+}
+
+
+
+// 定义响应 状态码和状态说明
+message ResultCode
+{
+    uint32 errCode = 1;
+    bytes errMsg = 2;
+}
+
+// 定义登录响应消息
+message LoginResponse
+{
+    ResultCode result = 1;
+    bool success = 2;
+}
+
+// ----------------------------------
+
+
+message GetFriendListsRequest
+{
+    // 给定一个 userId，返回其好友列表
+    uint32 userId = 1;
+}
+
+
+message User
+{
+    bytes name =1;
+    uint32 age = 2;
+
+    enum Sex{
+        MAN = 0;    // 这里的 0、1 指的是枚举变量的值，从 0 开始。
+        WOMAN = 1;
+    }
+
+    Sex sex = 3;
+
+}
+
+
+message GetFriendListsResponse
+{
+    ResultCode result =1;
+    repeated User friend_list =2;   // friend_list 对应一个 列表
+}
+
+// ----------------------------------
+
+
+
+// 在 protobuf 中通过定义 service 来定义 rpc 方法 --- 需开启 cc_generic_services 选项
+/* 
+注意，protobuf 本身不提供任何 rpc 通信功能，仅完成数据的序列化/反序列化。
+定义 service 可将 本地参数 与其 远程方法 进行绑定（否则，服务器收到参数后不知道该调用哪个方法进行处理），
+*/
+service UserServiceRpc      // 对应 class UserServiceRpc_Stub
+{
+    rpc Login(LoginRequest) returns(LoginResponse);
+    rpc GetFriendLists(GetFriendListsRequest) returns(GetFriendListsResponse);
+}

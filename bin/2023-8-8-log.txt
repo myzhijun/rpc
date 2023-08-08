@@ -1,0 +1,12 @@
+16:5:1 =>[error] ddddd
+16:5:1 =>[error] aaaa
+16:5:1 =>[error] service_name: FiendServiceRpc
+16:5:1 =>[error] method_name: GetFriendsList
+16:14:14 =>[error] ddddd
+16:14:14 =>[error] aaaa
+16:14:14 =>[error] service_name: FriendServiceRpc
+16:14:14 =>[error] method_name: GetFriendsList
+16:30:18 =>[error] ddddd
+16:30:18 =>[error] aaaa
+16:30:18 =>[error] service_name: FriendServiceRpc
+16:30:18 =>[error] method_name: GetFriendsList
